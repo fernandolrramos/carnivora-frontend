@@ -1,0 +1,128 @@
+/* Geral */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #343541; /* Fundo escuro */
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Container principal */
+.App {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  height: 90vh;
+  background: #40414F; /* Cinza escuro */
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* Chat Container */
+.chat-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #2B2C37;
+}
+
+/* Estilo das Mensagens */
+.chat-message {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.user-message {
+  background-color: #007bff; /* Azul */
+  color: white;
+  align-self: flex-end;
+  border-top-right-radius: 0;
+}
+
+.ai-message {
+  background-color: #50515E; /* Cinza escuro */
+  color: white;
+  align-self: flex-start;
+  border-top-left-radius: 0;
+}
+
+/* Input + Botão */
+.input-container {
+  display: flex;
+  padding: 10px;
+  background-color: #40414F;
+  border-top: 1px solid #555;
+}
+
+.chat-input {
+  flex-grow: 1;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #555;
+  color: white;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.chat-input:focus {
+  border-color: #007bff;
+}
+
+/* Botão Enviar */
+.send-button {
+  margin-left: 10px;
+  padding: 12px 20px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.send-button:hover {
+  background-color: #0056b3;
+}
+
+/* Placeholder do Input */
+.chat-input::placeholder {
+  color: #bbb;
+}
+
+/* Estilo do Scrollbar */
+.chat-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: #2B2C37;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .App {
+    width: 95%;
+    height: 95vh;
+  }
+}
