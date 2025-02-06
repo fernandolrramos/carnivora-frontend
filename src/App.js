@@ -46,7 +46,7 @@ function App() {
       const aiMessages = data.response
 	      .split("/n")
 	      .map((sentence, index) => { 
-		return{sender: "AI", text: sentence.trim()};
+		return{ sender: "AI", text: sentence.trim() };
 	      })
 	      .filter((msg) => msg.text.length > 0);
 
