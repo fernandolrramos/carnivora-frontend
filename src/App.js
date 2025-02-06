@@ -42,8 +42,15 @@ function App() {
       });
 
       const data = await response.json();
-      const aiMessage = { sender: "AI", text: data.response };
+      const aiMessages = data.response.split(/\n|\./).map((sentence, index) => { 
+		return{sender: "AI", text: sentence.trim()};
+	  });
 
+      setMessages((prevMessages) => [
+		...prevMessages, 
+		...aiMessages.filter((msg) => msg.text.length > 0),
+		]);
+	    
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
     } catch (error) {
       console.error("❌ Error sending message:", error);
