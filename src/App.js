@@ -44,7 +44,7 @@ function App() {
       const data = await response.json();
       //const aiMessages = data.response.split(/\n|\./).map((sentence, index) => { 
       const aiMessages = data.response
-	      .split(/\n|\./)
+	      .split(".")
 	      .map((sentence, index) => { 
 		return{ sender: "AI", text: sentence.trim() };
 	      })
