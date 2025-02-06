@@ -43,10 +43,12 @@ function App() {
 
       const data = await response.json();
       //const aiMessages = data.response.split(/\n|\./).map((sentence, index) => { 
-      const aiMessages = data.response.split("/n").map((sentence, index) => { 
+      const aiMessages = data.response
+	      .split("/n")
+	      .map((sentence, index) => { 
 		return{sender: "AI", text: sentence.trim()};
-	  })
-	.filter(msg) => msg.text.length > 0);
+	      })
+	      .filter((msg) => msg.text.length > 0);
 
       setMessages((prevMessages) => [
 		...prevMessages, 
