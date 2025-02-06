@@ -43,13 +43,25 @@ function App() {
 
       const data = await response.json();
       //const aiMessages = data.response.split(/\n|\./).map((sentence, index) => { 
-      const aiMessages = data.response
-	      .split(".")
-	      .map((sentence, index) => { 
-		return{ sender: "AI", text: sentence.trim() };
-	      })
-	      .filter((msg) => msg.text.length > 0);
+//     const aiMessages = data.response
+//	      .split(".")
+//	      .map((sentence, index) => { 
+//		return{ sender: "AI", text: sentence.trim() };
+//	      })
+//	      .filter((msg) => msg.text.length > 0);
+  const aiMessages = data.response
+	  .split(/\n+/)  // Divida nas quebras de linha
+	  .map((sentence, index) => {
+		// Verifique se a frase começa com um número seguido de ponto (exemplo: "1.")
+		const formattedSentence = sentence.trim();
+		if (formattedSentence.match(/^\d+\./)) {
+		  return { sender: "AI", text: formattedSentence }; // Mantém número e texto juntos
+		}
+		return { sender: "AI", text: formattedSentence };
+	  })
+	  .filter((msg) => msg.text.length > 0);
 
+	    
       setMessages((prevMessages) => [
 		...prevMessages, 
 		...aiMessages.filter((msg) => msg.text.length > 0),
