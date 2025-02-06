@@ -51,7 +51,7 @@ function App() {
 		...aiMessages.filter((msg) => msg.text.length > 0),
 		]);
 	    
-      setMessages((prevMessages) => [...prevMessages, aiMessage]);
+      setMessages((prevMessages) => [...prevMessages, aiMessages]);
     } catch (error) {
       console.error("❌ Error sending message:", error);
       setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI." }]);
