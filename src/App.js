@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { FaInstagram, FaYoutube } from "react-icons/fa";
 
-
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -34,40 +33,25 @@ function App() {
     setIsTyping(true);
 
     try {
-      //const response = await fetch("http://127.0.0.1:5000/chat", {
-	const response = await fetch("https://carnivora-backend.onrender.com/chat", {
+      const response = await fetch("https://carnivora-backend.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),
       });
 
       const data = await response.json();
-      //const aiMessages = data.response.split(/\n|\./).map((sentence, index) => { 
-//     const aiMessages = data.response
-//	      .split(".")
-//	      .map((sentence, index) => { 
-//		return{ sender: "AI", text: sentence.trim() };
-//	      })
-//	      .filter((msg) => msg.text.length > 0);
-  const aiMessages = data.response
-	  .split(/\n+/)  // Divida nas quebras de linha
-	  .map((sentence, index) => {
-		// Verifique se a frase começa com um número seguido de ponto (exemplo: "1.")
-		const formattedSentence = sentence.trim();
-		if (formattedSentence.match(/^\d+\./)) {
-		  return { sender: "AI", text: formattedSentence }; // Mantém número e texto juntos
-		}
-		return { sender: "AI", text: formattedSentence };
-	  })
-	  .filter((msg) => msg.text.length > 0);
+      const aiMessages = data.response
+        .split(/\n+/)  // Split by newlines
+        .map((sentence, index) => {
+          const formattedSentence = sentence.trim();
+          return { sender: "AI", text: formattedSentence };
+        })
+        .filter((msg) => msg.text.length > 0);
 
-	    
       setMessages((prevMessages) => [
-		...prevMessages, 
-		...aiMessages.filter((msg) => msg.text.length > 0),
-		]);
-	    
-      setMessages((prevMessages) => [...prevMessages, aiMessages]);
+        ...prevMessages, 
+        ...aiMessages
+      ]);
     } catch (error) {
       console.error("❌ Error sending message:", error);
       setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI." }]);
@@ -94,9 +78,9 @@ function App() {
             maxWidth: "75%",
             backgroundColor: msg.sender === "user" ? "#007bff" : "#28a745",
             color: "#fff"
-          }}>
-            {msg.text}
-          </div>
+          }}
+            dangerouslySetInnerHTML={{ __html: msg.text }} // Render HTML content
+          />
         ))}
         {isTyping && (
           <div style={{
@@ -108,7 +92,7 @@ function App() {
         )}
         <div ref={chatRef}></div>
       </div>
-	  
+
       <div style={{ display: "flex", marginTop: "10px" }}>
         <input
           type="text"
@@ -125,48 +109,47 @@ function App() {
           color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer"
         }}>Enviar</button>
       </div>
-	    
-		{/* Redes Sociais - Ícones com Links */}
-		<div style={{
-		  marginTop: "15px",
-		  textAlign: "center"
-		}}>
-		  <h5 style={{ textAlign: "center", color: "#333", marginBottom: "10px" }}>
-			Siga nossas redes sociais:
-		  </h5>
-		  <div style={{
-			display: "flex",
-			justifyContent: "center",
-			alignItems: "center",
-			gap: "15px"
-		  }}>
-			<a href="https://www.instagram.com/dietacarnivorabrasil"
-			   target="_blank"
-			   rel="noopener noreferrer"
-			   style={{ fontSize: "30px", color: "#C13584" }}>
-			  <FaInstagram />
-			</a>
-			<a href="https://www.youtube.com/@dietacarnivorabrasil4455"
-			   target="_blank"
-			   rel="noopener noreferrer"
-			   style={{ fontSize: "30px", color: "#FF0000" }}>
-			  <FaYoutube />
-			</a>
-		  </div>
-		</div>
-		
-		{/* Rodapé - Copyright */}
-		<footer style={{
-		  marginTop: "20px",
-		  textAlign: "center",
-		  fontSize: "14px",
-		  color: "#aaa",
-		  padding: "10px 0"
-		}}>
-		  © {new Date().getFullYear()} Dieta Carnívora Brasil. Todos os direitos reservados.
 
-		</footer>
-	  
+      {/* Redes Sociais - Ícones com Links */}
+      <div style={{
+        marginTop: "15px",
+        textAlign: "center"
+      }}>
+        <h5 style={{ textAlign: "center", color: "#333", marginBottom: "10px" }}>
+          Siga nossas redes sociais:
+        </h5>
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "15px"
+        }}>
+          <a href="https://www.instagram.com/dietacarnivorabrasil"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: "30px", color: "#C13584" }}>
+            <FaInstagram />
+          </a>
+          <a href="https://www.youtube.com/@dietacarnivorabrasil4455"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: "30px", color: "#FF0000" }}>
+            <FaYoutube />
+          </a>
+        </div>
+      </div>
+
+      {/* Rodapé - Copyright */}
+      <footer style={{
+        marginTop: "20px",
+        textAlign: "center",
+        fontSize: "14px",
+        color: "#aaa",
+        padding: "10px 0"
+      }}>
+        © {new Date().getFullYear()} Dieta Carnívora Brasil. Todos os direitos reservados.
+      </footer>
+
     </div>
   );
 }
