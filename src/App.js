@@ -94,7 +94,9 @@ function App() {
             maxWidth: "75%",
             backgroundColor: msg.sender === "user" ? "#007bff" : "#28a745",
             color: "#fff"
-          }}>
+          }}
+		dangerouslySetInnerHTML={{ __html: msg.text }} // Render HTML content  
+	>
             {msg.text}
           </div>
         ))}
