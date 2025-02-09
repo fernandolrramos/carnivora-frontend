@@ -116,7 +116,7 @@ function App() {
         textAlign: "center"
       }}>
         <h5 style={{ textAlign: "center", color: "#333", marginBottom: "10px" }}>
-          Siga <a href="https://www.dietacarnivorabrasil.com/"> Dieta Carnívora Brasil </a>:
+          Siga Dieta Carnívora Brasil:
         </h5>
         <div style={{
           display: "flex",
@@ -147,7 +147,7 @@ function App() {
         color: "#aaa",
         padding: "10px 0"
       }}>
-        © {new Date().getFullYear()} Dieta Carnívora Brasil. Todos os direitos reservados.
+        © {new Date().getFullYear()} <a href="https://www.dietacarnivorabrasil.com/"> Dieta Carnívora Brasil</a>. Todos os direitos reservados.
       </footer>
 
     </div>
