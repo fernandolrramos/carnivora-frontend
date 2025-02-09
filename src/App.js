@@ -147,7 +147,7 @@ function App() {
         color: "#aaa",
         padding: "10px 0"
       }}>
-        © {new Date().getFullYear()} <a href="https://www.dietacarnivorabrasil.com/"> Dieta Carnívora Brasil</a>. Todos os direitos reservados.
+        © {new Date().getFullYear()} <a href="https://www.dietacarnivorabrasil.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "#FF0000", fontWeight: "bold" }}> Dieta Carnívora Brasil</a>. Todos os direitos reservados.
       </footer>
 
     </div>
