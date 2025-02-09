@@ -116,7 +116,7 @@ function App() {
         textAlign: "center"
       }}>
         <h5 style={{ textAlign: "center", color: "#333", marginBottom: "10px" }}>
-          Siga nossas redes sociais:
+          Siga Dieta Carnívora Brasil:
         </h5>
         <div style={{
           display: "flex",
