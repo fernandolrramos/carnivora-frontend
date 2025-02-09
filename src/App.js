@@ -116,7 +116,7 @@ function App() {
         textAlign: "center"
       }}>
         <h5 style={{ textAlign: "center", color: "#333", marginBottom: "10px" }}>
-          Siga <a href="https://www.dietacarnivorabrasil.com/" Dieta Carnívora Brasil </a>:
+          Siga <a href="https://www.dietacarnivorabrasil.com/"> Dieta Carnívora Brasil </a>:
         </h5>
         <div style={{
           display: "flex",
