@@ -10,6 +10,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
     "react-scripts": "^3.0.1",
+    "next": "latest",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
