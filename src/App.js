@@ -139,6 +139,7 @@ function App() {
         </div>
       </div>
 
+/*
       {/* Rodapé - Copyright */}
       <footer style={{
         marginTop: "20px",
@@ -149,7 +150,7 @@ function App() {
       }}>
         © {new Date().getFullYear()} <a href="https://www.dietacarnivorabrasil.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "#FF0000", fontWeight: "bold" }}> Dieta Carnívora Brasil</a>. Todos os direitos reservados.
       </footer>
-
+*/
     </div>
   );
 }
