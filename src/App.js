@@ -54,7 +54,7 @@ function App() {
       ]);
     } catch (error) {
       console.error("❌ Error sending message:", error);
-      setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI." }]);
+      setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI. Atualize a página. Se o erro persistir contate: carnivoros.br@gmail.com" }]);
     }
 
     setIsTyping(false);
