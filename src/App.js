@@ -110,7 +110,7 @@ function App() {
         }}>Enviar</button>
       </div>
 
-      {/* Redes Sociais - Ícones com Links */}
+      {/* Redes Sociais - Ícones com Links 
       <div style={{
         marginTop: "15px",
         textAlign: "center"
@@ -137,7 +137,7 @@ function App() {
             <FaYoutube />
           </a>
         </div>
-      </div>
+      </div>*/} /*Fim do link das redes sociais*/
 
       {/* Rodapé - Copyright */}
       <footer style={{
