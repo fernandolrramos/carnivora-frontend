@@ -137,7 +137,7 @@ function App() {
             <FaYoutube />
           </a>
         </div>
-      </div>*/} /*Fim do link das redes sociais*/
+      </div>*/}
 
       {/* Rodapé - Copyright */}
       <footer style={{
