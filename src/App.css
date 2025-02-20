@@ -16,7 +16,7 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 800px;
+  max-width: none;
   height: 90vh;
   background: #40414F; /* Cinza escuro */
   border-radius: 10px;
