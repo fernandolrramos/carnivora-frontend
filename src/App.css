@@ -2,8 +2,7 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  /*background-color: #343541; /* Fundo escuro */
-  background-color: red !important;
+  background-color: #343541; /* Fundo escuro */
   color: #ffffff;
   display: flex;
   justify-content: center;
@@ -16,8 +15,8 @@ body {
 .App {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 1200px;
+  width: 100% !important;
+  max-width: 1200px !important;
   height: 90vh;
   background: #40414F; /* Cinza escuro */
   border-radius: 10px;
