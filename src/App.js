@@ -62,12 +62,13 @@ function App() {
 
   return (
     <div style={{
-      maxWidth: "600px", margin: "auto", padding: "20px", fontFamily: "Arial",
+      display: "flex", flexDirection: "column", height: "100vh", maxWidth: "600px",
+      margin: "auto", padding: "20px", fontFamily: "Arial",
       backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
     }}>
       <div style={{
-        border: "1px solid #ccc", padding: "10px", height: "500px", minHeight: "500px",
-        maxHeight: "80vh", overflowY: "auto", backgroundColor: "#fff",
+        border: "1px solid #ccc", padding: "10px", flexGrow: 1,
+        overflowY: "auto", backgroundColor: "#fff",
         borderRadius: "5px", display: "flex", flexDirection: "column"
       }}>
         {messages.map((msg, index) => (
@@ -94,7 +95,7 @@ function App() {
         <div ref={chatRef}></div>
       </div>
 
-      <div style={{ display: "flex", marginTop: "10px" }}>
+      <div style={{display: "flex", padding: "10px", position: "sticky", bottom: 0, background: "#f4f4f4", width: "100%"}}>
         <input
           type="text"
           value={input}
