@@ -75,6 +75,7 @@ body {
 
 .chat-input {
   flex-grow: 1;
+  width: 100%;
   padding: 12px;
   font-size: 16px;
   border-radius: 5px;
@@ -99,6 +100,7 @@ body {
   color: white;
   cursor: pointer;
   transition: background 0.2s;
+  min-width: 50px; /* Prevents button from being too big */
 }
 
 .send-button:hover {
@@ -127,7 +129,28 @@ body {
 /* Responsividade */
 @media (max-width: 768px) {
   .App {
-    width: 95%;
-    height: 95vh;
+    width: 100%;  /* Use full width on small screens */
+    height: 100vh;  /* Use full height */
+    border-radius: 0;  /* Remove rounded corners for a cleaner look */
+  }
+
+  .chat-container {
+    padding: 10px;  /* Reduce padding for better spacing */
+  }
+
+  .chat-message {
+    font-size: 14px;  /* Adjust font size for better readability */
+    max-width: 90%;  /* Prevents messages from stretching too much */
+  }
+
+  .chat-input {
+    font-size: 14px; /* Reduce input font size */
+    padding: 10px;
+  }
+
+  .send-button {
+    padding: 10px 15px;  /* Make the button smaller */
+    font-size: 14px;
   }
 }
+
