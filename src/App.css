@@ -15,9 +15,10 @@ body {
 .App {
   display: flex;
   flex-direction: column;
-  width: 90% !important;
+  width: 100% !important;
   max-width: 1500px !important;
   height: 90vh !important;
+  min-height: 600px;  /* Prevents shrinking */
   background: #40414F; /* Cinza escuro */
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
