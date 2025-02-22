@@ -27,8 +27,8 @@ body {
 /* Chat Container */
 .chat-container {
   flex-grow: 1;
-  overflow-y: auto;
-  padding: 20px;
+  height: calc(100vh - 150px);  /* Ensures it stays fixed within the viewport */
+  overflow-y: hidden;  /* Prevents auto-scrolling */  padding: 20px;
   display: flex;
   flex-direction: column;
   width: 100%; /* Makes the chat container use the full available width */
