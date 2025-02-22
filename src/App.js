@@ -8,21 +8,17 @@ function App() {
   const [isTyping, setIsTyping] = useState(false);
   const chatRef = useRef(null);
 
-  // ✅ Doesnt scroll to bottom when messages update
+  // ✅ Prevent auto-scroll while user is typing
   useEffect(() => {
     if (chatRef.current && !isTyping) {  
       chatRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }, [messages, isTyping]);
 
-  // ✅ Automatically send a welcome message when the chat loads
+  // ✅ Welcome message on load
   useEffect(() => {
-    const welcomeMessage = {
-      sender: "AI",
-      text: "Seja bem-vindo! 🥩 Eu sou a inteligência artificial do Dieta Carnívora Brasil. Como posso te ajudar hoje?"
-    };
-    setMessages([welcomeMessage]); // Set initial welcome message
-  }, []); // Runs only once when component mounts
+    setMessages([{ sender: "AI", text: "Seja bem-vindo! 🥩 Eu sou a inteligência artificial do Dieta Carnívora Brasil. Como posso te ajudar hoje?" }]);
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -41,20 +37,17 @@ function App() {
 
       const data = await response.json();
       const aiMessages = data.response
-        .split(/\n+/)  // Split by newlines
-        .map((sentence, index) => {
-          const formattedSentence = sentence.trim();
-          return { sender: "AI", text: formattedSentence };
-        })
+        .split(/\n+/)
+        .map((sentence) => ({ sender: "AI", text: sentence.trim() }))
         .filter((msg) => msg.text.length > 0);
 
-      setMessages((prevMessages) => [
-        ...prevMessages, 
-        ...aiMessages
-      ]);
+      setMessages((prevMessages) => [...prevMessages, ...aiMessages]);
     } catch (error) {
       console.error("❌ Error sending message:", error);
-      setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI. Atualize a página. Se o erro persistir contate: carnivoros.br@gmail.com" }]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: "AI", text: "Erro: Não foi possível conectar ao AI. Atualize a página. Se o erro persistir contate: carnivoros.br@gmail.com" }
+      ]);
     }
 
     setIsTyping(false);
@@ -62,31 +55,31 @@ function App() {
 
   return (
     <div style={{
-      maxWidth: "600px", margin: "auto", padding: "20px", fontFamily: "Arial",
-      backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
+      display: "flex", flexDirection: "column",
+      height: "100vh", maxWidth: "600px", margin: "auto",
+      padding: "20px", fontFamily: "Arial", backgroundColor: "#f4f4f4",
+      borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
     }}>
+      
+      {/* Chat Messages Container */}
       <div style={{
-        border: "1px solid #ccc", padding: "10px", height: "500px", minHeight: "500px",
-        maxHeight: "80vh", overflowY: "auto", backgroundColor: "#fff",
-        borderRadius: "5px", display: "flex", flexDirection: "column"
+        flexGrow: 1, overflowY: "auto", backgroundColor: "#fff",
+        borderRadius: "5px", padding: "10px", display: "flex", flexDirection: "column"
       }}>
         {messages.map((msg, index) => (
           <div key={index} style={{
             alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-            margin: "5px 0",
-            padding: "10px",
-            borderRadius: "10px",
-            maxWidth: "75%",
-            backgroundColor: msg.sender === "user" ? "#007bff" : "#28a745",
+            margin: "5px 0", padding: "10px", borderRadius: "10px",
+            maxWidth: "75%", backgroundColor: msg.sender === "user" ? "#007bff" : "#28a745",
             color: "#fff"
           }}
-            dangerouslySetInnerHTML={{ __html: msg.text }} // Render HTML content
+            dangerouslySetInnerHTML={{ __html: msg.text }} 
           />
         ))}
         {isTyping && (
           <div style={{
-            alignSelf: "flex-start", margin: "5px 0", padding: "10px", borderRadius: "10px",
-            maxWidth: "75%", backgroundColor: "#ddd", color: "#333"
+            alignSelf: "flex-start", margin: "5px 0", padding: "10px",
+            borderRadius: "10px", maxWidth: "75%", backgroundColor: "#ddd", color: "#333"
           }}>
             IA está escrevendo...
           </div>
@@ -94,7 +87,11 @@ function App() {
         <div ref={chatRef}></div>
       </div>
 
-      <div style={{ display: "flex", marginTop: "10px" }}>
+      {/* Chat Input Box - Always Visible */}
+      <div style={{
+        display: "flex", padding: "10px",
+        position: "sticky", bottom: 0, background: "#f4f4f4", width: "100%"
+      }}>
         <input
           type="text"
           value={input}
@@ -111,46 +108,12 @@ function App() {
         }}>Enviar</button>
       </div>
 
-      {/* Redes Sociais - Ícones com Links 
-      <div style={{
-        marginTop: "15px",
-        textAlign: "center"
-      }}>
-        <h5 style={{ textAlign: "center", color: "#333", marginBottom: "10px" }}>
-          Siga Dieta Carnívora Brasil:
-        </h5>
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "15px"
-        }}>
-          <a href="https://www.instagram.com/dietacarnivorabrasil"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "30px", color: "#C13584" }}>
-            <FaInstagram />
-          </a>
-          <a href="https://www.youtube.com/@dietacarnivorabrasil4455"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "30px", color: "#FF0000" }}>
-            <FaYoutube />
-          </a>
-        </div>
-      </div>*/}
-
-      {/* Rodapé - Copyright */}
+      {/* Footer */}
       <footer style={{
-        marginTop: "20px",
-        textAlign: "center",
-        fontSize: "14px",
-        color: "#aaa",
-        padding: "10px 0"
+        textAlign: "center", fontSize: "14px", color: "#aaa", padding: "10px 0"
       }}>
         © {new Date().getFullYear()} Dieta Carnívora Brasil. Todos os direitos reservados.
       </footer>
-          
     </div>
   );
 }
