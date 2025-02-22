@@ -8,12 +8,12 @@ function App() {
   const [isTyping, setIsTyping] = useState(false);
   const chatRef = useRef(null);
 
-  // ✅ Scroll to bottom when messages update
+  // ✅ Doesnt scroll to bottom when messages update
   useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollIntoView({ behavior: "smooth" });
+    if (chatRef.current && !isTyping) {  
+      chatRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
-  }, [messages]);
+  }, [messages, isTyping]);
 
   // ✅ Automatically send a welcome message when the chat loads
   useEffect(() => {
@@ -66,7 +66,8 @@ function App() {
       backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
     }}>
       <div style={{
-        border: "1px solid #ccc", padding: "10px", height: "350px", overflowY: "auto", backgroundColor: "#fff",
+        border: "1px solid #ccc", padding: "10px", height: "500px", minHeight: "500px",
+        maxHeight: "80vh", overflowY: "auto", backgroundColor: "#fff",
         borderRadius: "5px", display: "flex", flexDirection: "column"
       }}>
         {messages.map((msg, index) => (
