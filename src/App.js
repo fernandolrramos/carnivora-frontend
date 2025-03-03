@@ -1,28 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { FaInstagram, FaYoutube } from "react-icons/fa";
-import wixUsers from 'wix-users';  // ✅ Import Wix Users API
+
+// ✅ Use Wix window object (no need to install wix-users)
+const getUserEmail = async () => {
+  try {
+    const user = window.wixUsers?.currentUser;
+    if (!user || !user.loggedIn) {
+      console.warn("⚠️ User is not logged in!");
+      return null;
+    }
+    return await user.getEmail();
+  } catch (error) {
+    console.error("❌ Error fetching user email:", error);
+    return null;
+  }
+};
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const chatRef = useRef(null);
-  const [userId, setUserId] = useState(null); // ✅ Store Wix user ID
+  const [userId, setUserId] = useState(null); // ✅ Store user ID from Wix
 
   // ✅ Fetch Wix User Email when Component Mounts
   useEffect(() => {
-    let user = wixUsers.currentUser;
-    user.getEmail()
-      .then(email => {
-        if (email) {
-          console.log("✅ User ID (Email):", email);
-          setUserId(email); // ✅ Store User ID
-        } else {
-          console.warn("⚠️ User is not logged in!");
-        }
-      })
-      .catch(error => console.error("❌ Error fetching user email:", error));
+    getUserEmail().then(email => {
+      if (email) {
+        console.log("✅ User ID (Email):", email);
+        setUserId(email); // ✅ Store User ID
+      }
+    });
   }, []);
 
   // ✅ Auto-scroll behavior
@@ -34,16 +43,12 @@ function App() {
 
   // ✅ Automatically send a welcome message
   useEffect(() => {
-    const welcomeMessage = {
-      sender: "AI",
-      text: "Seja bem-vindo! 🥩 Eu sou a inteligência artificial do Dieta Carnívora Brasil. Como posso te ajudar hoje?"
-    };
-    setMessages([welcomeMessage]);
+    setMessages([{ sender: "AI", text: "Seja bem-vindo! 🥩 Como posso te ajudar hoje?" }]);
   }, []);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-    
+
     if (!userId) {
       console.error("❌ Error: Usuário não identificado.");
       setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "⚠️ Você precisa estar logado para usar o chat." }]);
