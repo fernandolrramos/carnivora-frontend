@@ -14,6 +14,9 @@ function App() {
     const userEmailElement = document.getElementById("userEmail");
     if (userEmailElement) {
       setUserId(userEmailElement.innerText.trim());
+      console.log("✅ Retrieved User ID:", userEmailElement.innerText.trim());
+    } else {
+        console.warn("⚠️ User ID not found.");
     }
   }, []);
 
