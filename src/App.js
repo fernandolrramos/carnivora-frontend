@@ -6,32 +6,19 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const chatRef = useRef(null);
   const [userId, setUserId] = useState(null);
+  const chatRef = useRef(null);
 
-  // ✅ Fetch user ID from Wix
+  // ✅ Get user_id from the URL (sent from Wix)
   useEffect(() => {
-    const userEmailElement = document.getElementById("userEmail");
-    if (userEmailElement) {
-      setUserId(userEmailElement.innerText.trim());
-      console.log("✅ Retrieved User ID:", userEmailElement.innerText.trim());
+    const urlParams = new URLSearchParams(window.location.search);
+    const user_id = urlParams.get("user_id");
+    if (user_id) {
+      console.log("✅ Retrieved User ID from Wix:", user_id);
+      setUserId(user_id);
     } else {
-        console.warn("⚠️ User ID not found.");
+      console.warn("⚠️ No user ID found in URL.");
     }
-  }, []);
-
-  useEffect(() => {
-    if (chatRef.current && !isTyping) {
-      chatRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  }, [messages, isTyping]);
-
-  useEffect(() => {
-    const welcomeMessage = {
-      sender: "AI",
-      text: "Seja bem-vindo! 🥩 Eu sou a inteligência artificial do Dieta Carnívora Brasil. Como posso te ajudar hoje?"
-    };
-    setMessages([welcomeMessage]);
   }, []);
 
   const sendMessage = async () => {
