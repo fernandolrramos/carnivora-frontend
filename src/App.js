@@ -1,49 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { FaInstagram, FaYoutube } from "react-icons/fa";
-
-// ✅ Use Wix window object (no need to install wix-users)
-const getUserEmail = async () => {
-  try {
-    const user = window.wixUsers?.currentUser;
-    if (!user || !user.loggedIn) {
-      console.warn("⚠️ User is not logged in!");
-      return null;
-    }
-    return await user.getEmail();
-  } catch (error) {
-    console.error("❌ Error fetching user email:", error);
-    return null;
-  }
-};
+import wixFetch from 'wix-fetch';  // ✅ Import Wix Fetch API
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const chatRef = useRef(null);
-  const [userId, setUserId] = useState(null); // ✅ Store user ID from Wix
+  const [userId, setUserId] = useState(null); // ✅ Store Wix User ID
 
-  // ✅ Fetch Wix User Email when Component Mounts
+  // ✅ Fetch User ID from Wix Backend API
   useEffect(() => {
-    getUserEmail().then(email => {
-      if (email) {
-        console.log("✅ User ID (Email):", email);
-        setUserId(email); // ✅ Store User ID
-      }
-    });
-  }, []);
-
-  // ✅ Auto-scroll behavior
-  useEffect(() => {
-    if (chatRef.current && !isTyping) {  
-      chatRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  }, [messages, isTyping]);
-
-  // ✅ Automatically send a welcome message
-  useEffect(() => {
-    setMessages([{ sender: "AI", text: "Seja bem-vindo! 🥩 Como posso te ajudar hoje?" }]);
+    wixFetch
+      .post("/_functions/getUserEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.userId) {
+          console.log("✅ User ID (Email):", data.userId);
+          setUserId(data.userId);
+        } else {
+          console.warn("⚠️ User is not logged in!");
+        }
+      })
+      .catch(error => console.error("❌ Error fetching user ID:", error));
   }, []);
 
   const sendMessage = async () => {
@@ -135,16 +118,6 @@ function App() {
           color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer"
         }}>Enviar</button>
       </div>
-
-      <footer style={{
-        marginTop: "20px",
-        textAlign: "center",
-        fontSize: "14px",
-        color: "#aaa",
-        padding: "10px 0"
-      }}>
-        © {new Date().getFullYear()} Dieta Carnívora Brasil. Todos os direitos reservados.
-      </footer>
     </div>
   );
 }
