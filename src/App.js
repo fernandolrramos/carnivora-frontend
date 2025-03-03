@@ -27,14 +27,13 @@ function App() {
   useEffect(() => {
     fetchUserEmail().then(email => {
       if (email) {
-        console.log("✅ User ID (Email):", email);
+        console.log("✅ User ID (Email) inside React:", email);
         setUserId(email);
       } else {
         console.warn("⚠️ User is not logged in!");
       }
     });
   }, []);
-
 
   const sendMessage = async () => {
     if (!input.trim()) return;
