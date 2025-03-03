@@ -1,158 +1,114 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './App.css';
-import { FaInstagram, FaYoutube } from "react-icons/fa";
+import openai
+import os
+import time
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import re
+from datetime import datetime, timedelta
 
-function App() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const chatRef = useRef(null);
+app = Flask(__name__)
+CORS(app)
 
-  // ✅ Doesnt scroll to bottom when messages update
-  useEffect(() => {
-    if (chatRef.current && !isTyping) {  
-      chatRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  }, [messages, isTyping]);
+# ✅ OpenAI API Key and Assistant ID
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+ASSISTANT_ID = os.getenv("ASSISTANT_ID")
 
-  // ✅ Automatically send a welcome message when the chat loads
-  useEffect(() => {
-    const welcomeMessage = {
-      sender: "AI",
-      text: "Seja bem-vindo! 🥩 Eu sou a inteligência artificial do Dieta Carnívora Brasil. Como posso te ajudar hoje?"
-    };
-    setMessages([welcomeMessage]); // Set initial welcome message
-  }, []); // Runs only once when component mounts
+if not OPENAI_API_KEY:
+    raise ValueError("⚠️ Error: OPENAI_API_KEY is not set. Make sure it is properly configured.")
+if not ASSISTANT_ID:
+    raise ValueError("⚠️ Error: ASSISTANT_ID is not set. Make sure it is properly configured.")
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
-    const userMessage = { sender: "user", text: input };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
-    setInput('');
-    setIsTyping(true);
-
-    try {
-      const response = await fetch("https://carnivora-backend.onrender.com/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
-      });
-
-      const data = await response.json();
-      const aiMessages = data.response
-        .split(/\n+/)  // Split by newlines
-        .map((sentence, index) => {
-          const formattedSentence = sentence.trim();
-          return { sender: "AI", text: formattedSentence };
-        })
-        .filter((msg) => msg.text.length > 0);
-
-      setMessages((prevMessages) => [
-        ...prevMessages, 
-        ...aiMessages
-      ]);
-    } catch (error) {
-      console.error("❌ Error sending message:", error);
-      setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI. Atualize a página. Se o erro persistir contate: carnivoros.br@gmail.com" }]);
-    }
-
-    setIsTyping(false);
-  };
-
-  return (
-    <div style={{
-      maxWidth: "600px", margin: "auto", padding: "20px", fontFamily: "Arial",
-      backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
-    }}>
-      <div style={{
-        border: "1px solid #ccc", padding: "10px", height: "500px", minHeight: "500px",
-        maxHeight: "80vh", overflowY: "auto", backgroundColor: "#fff",
-        borderRadius: "5px", display: "flex", flexDirection: "column"
-      }}>
-        {messages.map((msg, index) => (
-          <div key={index} style={{
-            alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-            margin: "5px 0",
-            padding: "10px",
-            borderRadius: "10px",
-            maxWidth: "75%",
-            backgroundColor: msg.sender === "user" ? "#007bff" : "#28a745",
-            color: "#fff"
-          }}
-            dangerouslySetInnerHTML={{ __html: msg.text }} // Render HTML content
-          />
-        ))}
-        {isTyping && (
-          <div style={{
-            alignSelf: "flex-start", margin: "5px 0", padding: "10px", borderRadius: "10px",
-            maxWidth: "75%", backgroundColor: "#ddd", color: "#333"
-          }}>
-            IA está escrevendo...
-          </div>
-        )}
-        <div ref={chatRef}></div>
-      </div>
-
-      <div style={{ display: "flex", marginTop: "10px" }}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
-          style={{
-            flexGrow: 1, padding: "10px", borderRadius: "5px", border: "1px solid #ccc"
-          }}
-          placeholder="Pergunte sobre a dieta carnívora..."
-        />
-        <button onClick={sendMessage} style={{
-          padding: "10px 15px", marginLeft: "5px", backgroundColor: "#007bff",
-          color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer"
-        }}>Enviar</button>
-      </div>
-
-      {/* Redes Sociais - Ícones com Links 
-      <div style={{
-        marginTop: "15px",
-        textAlign: "center"
-      }}>
-        <h5 style={{ textAlign: "center", color: "#333", marginBottom: "10px" }}>
-          Siga Dieta Carnívora Brasil:
-        </h5>
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "15px"
-        }}>
-          <a href="https://www.instagram.com/dietacarnivorabrasil"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "30px", color: "#C13584" }}>
-            <FaInstagram />
-          </a>
-          <a href="https://www.youtube.com/@dietacarnivorabrasil4455"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "30px", color: "#FF0000" }}>
-            <FaYoutube />
-          </a>
-        </div>
-      </div>*/}
-
-      {/* Rodapé - Copyright */}
-      <footer style={{
-        marginTop: "20px",
-        textAlign: "center",
-        fontSize: "14px",
-        color: "#aaa",
-        padding: "10px 0"
-      }}>
-        © {new Date().getFullYear()} Dieta Carnívora Brasil. Todos os direitos reservados.
-      </footer>
-          
-    </div>
-  );
+# ✅ Token pricing for GPT-4-Turbo
+TOKEN_PRICING = {
+    "input": 0.01 / 1000,  # $0.01 per 1,000 input tokens
+    "output": 0.03 / 1000,  # $0.03 per 1,000 output tokens
 }
 
-export default App;
+# ✅ Usage tracking (resets daily)
+user_usage = {}  # { "user_id": {"tokens": 0, "cost": 0.00, "messages": 0, "last_message_time": None, "date": "YYYY-MM-DD"} }
+DAILY_LIMIT = 0.50  # $0.50 per user per day
+MESSAGE_LIMIT = 20  # 20 messages per user per day
+COOLDOWN_TIME = 15  # 15 seconds between messages
+
+def reset_usage():
+    """Resets usage data daily."""
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+    for user_id in list(user_usage.keys()):
+        if user_usage[user_id]["date"] != today:
+            del user_usage[user_id]
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    try:
+        reset_usage()
+        data = request.get_json(silent=True)
+        if not data or "message" not in data or "user_id" not in data:
+            return jsonify({"response": "Erro: Nenhuma mensagem fornecida ou usuário não identificado."}), 400
+
+        user_id = data["user_id"].strip()
+        user_message = data["message"].strip()[:200]
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+
+        if user_id not in user_usage:
+            user_usage[user_id] = {"tokens": 0, "cost": 0.00, "messages": 0, "last_message_time": None, "date": today}
+
+        # ✅ Enforce daily message limit
+        if user_usage[user_id]["messages"] >= MESSAGE_LIMIT:
+            return jsonify({"response": f"⚠️ Você atingiu o limite diário de {MESSAGE_LIMIT} mensagens. Tente novamente amanhã."}), 429
+
+        # ✅ Enforce daily cost limit
+        if user_usage[user_id]["cost"] >= DAILY_LIMIT:
+            return jsonify({"response": f"⚠️ Você atingiu o limite diário de ${DAILY_LIMIT:.2f}. Tente novamente amanhã."}), 429
+
+        # ✅ Enforce cooldown time
+        last_message_time = user_usage[user_id]["last_message_time"]
+        if last_message_time:
+            time_since_last = (datetime.utcnow() - last_message_time).total_seconds()
+            if time_since_last < COOLDOWN_TIME:
+                return jsonify({"response": f"⏳ Aguarde {COOLDOWN_TIME - int(time_since_last)} segundos antes de enviar outra mensagem."}), 429
+
+        thread = client.beta.threads.create(messages=[{"role": "user", "content": user_message}])
+        messages = client.beta.threads.messages.list(thread_id=thread.id)
+
+        run = client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id=ASSISTANT_ID,
+            instructions=f"Pergunta do usuário: {user_message}",
+            tool_choice="auto",
+        )
+
+        while True:
+            run_status = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+            if run_status.status == "completed":
+                break
+            elif run_status.status == "failed":
+                return jsonify({"response": "⚠️ Erro ao processar a resposta do assistente."}), 500
+            time.sleep(3)
+
+        messages = client.beta.threads.messages.list(thread_id=thread.id)
+        if messages.data:
+            ai_response = messages.data[0].content[0].text.value.strip()
+        else:
+            ai_response = "⚠️ Erro: O assistente não retornou resposta válida."
+
+        input_tokens = len(user_message.split()) * 1.3
+        output_tokens = len(ai_response.split()) * 1.3
+
+        input_cost = input_tokens * TOKEN_PRICING["input"]
+        output_cost = output_tokens * TOKEN_PRICING["output"]
+        total_cost = input_cost + output_cost
+
+        user_usage[user_id]["tokens"] += (input_tokens + output_tokens)
+        user_usage[user_id]["cost"] += total_cost
+        user_usage[user_id]["messages"] += 1
+        user_usage[user_id]["last_message_time"] = datetime.utcnow()
+
+        if user_usage[user_id]["cost"] >= DAILY_LIMIT:
+            return jsonify({"response": f"⚠️ Você atingiu o limite diário de ${DAILY_LIMIT:.2f}. Tente novamente amanhã."}), 429
+
+        return jsonify({"response": ai_response})
+
+    except Exception as e:
+        return jsonify({"response": f"Erro interno do servidor: {str(e)}"}), 500
