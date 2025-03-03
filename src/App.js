@@ -1,31 +1,54 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { FaInstagram, FaYoutube } from "react-icons/fa";
+import wixUsers from 'wix-users';  // ✅ Import Wix Users API
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const chatRef = useRef(null);
+  const [userId, setUserId] = useState(null); // ✅ Store Wix user ID
 
-  // ✅ Doesnt scroll to bottom when messages update
+  // ✅ Fetch Wix User Email when Component Mounts
+  useEffect(() => {
+    let user = wixUsers.currentUser;
+    user.getEmail()
+      .then(email => {
+        if (email) {
+          console.log("✅ User ID (Email):", email);
+          setUserId(email); // ✅ Store User ID
+        } else {
+          console.warn("⚠️ User is not logged in!");
+        }
+      })
+      .catch(error => console.error("❌ Error fetching user email:", error));
+  }, []);
+
+  // ✅ Auto-scroll behavior
   useEffect(() => {
     if (chatRef.current && !isTyping) {  
       chatRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }, [messages, isTyping]);
 
-  // ✅ Automatically send a welcome message when the chat loads
+  // ✅ Automatically send a welcome message
   useEffect(() => {
     const welcomeMessage = {
       sender: "AI",
       text: "Seja bem-vindo! 🥩 Eu sou a inteligência artificial do Dieta Carnívora Brasil. Como posso te ajudar hoje?"
     };
-    setMessages([welcomeMessage]); // Set initial welcome message
-  }, []); // Runs only once when component mounts
+    setMessages([welcomeMessage]);
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
+    
+    if (!userId) {
+      console.error("❌ Error: Usuário não identificado.");
+      setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "⚠️ Você precisa estar logado para usar o chat." }]);
+      return;
+    }
 
     const userMessage = { sender: "user", text: input };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
@@ -36,22 +59,19 @@ function App() {
       const response = await fetch("https://carnivora-backend.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({
+          user_id: userId, // ✅ Send Wix user email as ID
+          message: input
+        }),
       });
 
       const data = await response.json();
       const aiMessages = data.response
-        .split(/\n+/)  // Split by newlines
-        .map((sentence, index) => {
-          const formattedSentence = sentence.trim();
-          return { sender: "AI", text: formattedSentence };
-        })
+        .split(/\n+/) 
+        .map((sentence) => ({ sender: "AI", text: sentence.trim() }))
         .filter((msg) => msg.text.length > 0);
 
-      setMessages((prevMessages) => [
-        ...prevMessages, 
-        ...aiMessages
-      ]);
+      setMessages((prevMessages) => [...prevMessages, ...aiMessages]);
     } catch (error) {
       console.error("❌ Error sending message:", error);
       setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI. Atualize a página. Se o erro persistir contate: carnivoros.br@gmail.com" }]);
@@ -80,7 +100,7 @@ function App() {
             backgroundColor: msg.sender === "user" ? "#007bff" : "#28a745",
             color: "#fff"
           }}
-            dangerouslySetInnerHTML={{ __html: msg.text }} // Render HTML content
+            dangerouslySetInnerHTML={{ __html: msg.text }} 
           />
         ))}
         {isTyping && (
@@ -111,36 +131,6 @@ function App() {
         }}>Enviar</button>
       </div>
 
-      {/* Redes Sociais - Ícones com Links 
-      <div style={{
-        marginTop: "15px",
-        textAlign: "center"
-      }}>
-        <h5 style={{ textAlign: "center", color: "#333", marginBottom: "10px" }}>
-          Siga Dieta Carnívora Brasil:
-        </h5>
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "15px"
-        }}>
-          <a href="https://www.instagram.com/dietacarnivorabrasil"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "30px", color: "#C13584" }}>
-            <FaInstagram />
-          </a>
-          <a href="https://www.youtube.com/@dietacarnivorabrasil4455"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "30px", color: "#FF0000" }}>
-            <FaYoutube />
-          </a>
-        </div>
-      </div>*/}
-
-      {/* Rodapé - Copyright */}
       <footer style={{
         marginTop: "20px",
         textAlign: "center",
@@ -150,7 +140,6 @@ function App() {
       }}>
         © {new Date().getFullYear()} Dieta Carnívora Brasil. Todos os direitos reservados.
       </footer>
-          
     </div>
   );
 }
