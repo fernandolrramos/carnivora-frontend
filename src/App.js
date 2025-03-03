@@ -1,7 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { FaInstagram, FaYoutube } from "react-icons/fa";
-import wixFetch from 'wix-fetch';  // ✅ Import Wix Fetch API
+
+const fetchUserEmail = async () => {
+  try {
+    const response = await fetch("/_functions/getUserEmail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await response.json();
+    return data.userId || null;
+  } catch (error) {
+    console.error("❌ Error fetching user ID:", error);
+    return null;
+  }
+};
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -12,22 +25,16 @@ function App() {
 
   // ✅ Fetch User ID from Wix Backend API
   useEffect(() => {
-    wixFetch
-      .post("/_functions/getUserEmail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.userId) {
-          console.log("✅ User ID (Email):", data.userId);
-          setUserId(data.userId);
-        } else {
-          console.warn("⚠️ User is not logged in!");
-        }
-      })
-      .catch(error => console.error("❌ Error fetching user ID:", error));
+    fetchUserEmail().then(email => {
+      if (email) {
+        console.log("✅ User ID (Email):", email);
+        setUserId(email);
+      } else {
+        console.warn("⚠️ User is not logged in!");
+      }
+    });
   }, []);
+
 
   const sendMessage = async () => {
     if (!input.trim()) return;
