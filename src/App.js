@@ -13,8 +13,9 @@ function App() {
   useEffect(() => {
       const urlParams = new URLSearchParams(window.location.search);
       const user_id = urlParams.get("user_id");
+  
       if (user_id) {
-          console.log("✅ Retrieved User ID from Wix:", user_id);
+          console.log("✅ Retrieved User ID from Wix:", user_id); // 👈 Força a exibição no console
           setUserId(user_id);
       } else {
           console.warn("⚠️ No user ID found in URL.");
