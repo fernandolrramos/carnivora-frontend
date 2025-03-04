@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { FaInstagram, FaYoutube } from "react-icons/fa";
-import wixUsers from 'wix-users';
 
 function App() {
   const [messages, setMessages] = useState([]);
