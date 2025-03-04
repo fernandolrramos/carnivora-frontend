@@ -11,16 +11,14 @@ function App() {
 
   // ✅ Get user_id from Wix backend
   useEffect(() => {
-    wixUsers.currentUser.getEmail()
-      .then(email => {
-        if (email) {
-          console.log("✅ Retrieved User ID from Wix:", email);
-          setUserId(email);
-        } else {
-          console.warn("⚠️ No user ID found.");
-        }
-      })
-      .catch(error => console.error("⚠️ Error fetching user email:", error));
+      const urlParams = new URLSearchParams(window.location.search);
+      const user_id = urlParams.get("user_id");
+      if (user_id) {
+          console.log("✅ Retrieved User ID from Wix:", user_id);
+          setUserId(user_id);
+      } else {
+          console.warn("⚠️ No user ID found in URL.");
+      }
   }, []);
 
   // ✅ Doesnt scroll to bottom when messages update
