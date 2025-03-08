@@ -9,7 +9,6 @@ function App() {
   const [userId, setUserId] = useState(null);
   const chatRef = useRef(null);
 
-  // ✅ Get user_id from the URL (sent from Wix)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const user_id = urlParams.get("user_id");
@@ -21,25 +20,22 @@ function App() {
     }
   }, []);
 
-  // ✅ Doesnt scroll to bottom when messages update
   useEffect(() => {
     if (chatRef.current && !isTyping) {  
       chatRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }, [messages, isTyping]);
 
-  // ✅ Automatically send a welcome message when the chat loads
   useEffect(() => {
     const welcomeMessage = {
       sender: "AI",
       text: "Seja bem-vindo! 🥩 Eu sou a inteligência artificial do Dieta Carnívora Brasil. Como posso te ajudar hoje?"
     };
-    setMessages([welcomeMessage]); // Set initial welcome message
-  }, []); // Runs only once when component mounts
+    setMessages([welcomeMessage]); 
+  }, []); 
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-
     if (!userId) {
       setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "⚠️ Você precisa estar logado para usar o chat." }]);
       return;
@@ -59,17 +55,11 @@ function App() {
 
       const data = await response.json();
       const aiMessages = data.response
-        .split(/\n+/)  // Split by newlines
-        .map((sentence, index) => {
-          const formattedSentence = sentence.trim();
-          return { sender: "AI", text: formattedSentence };
-        })
+        .split(/\n+/)
+        .map((sentence) => ({ sender: "AI", text: sentence.trim() }))
         .filter((msg) => msg.text.length > 0);
 
-      setMessages((prevMessages) => [
-        ...prevMessages, 
-        ...aiMessages
-      ]);
+      setMessages((prevMessages) => [...prevMessages, ...aiMessages]);
     } catch (error) {
       console.error("❌ Error sending message:", error);
       setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI. Atualize a página. Se o erro persistir contate: carnivoros.br@gmail.com" }]);
@@ -80,44 +70,43 @@ function App() {
 
   return (   
     <div style={{
-      maxWidth: "600px", margin: "auto", padding: "20px", fontFamily: "Arial",
-      backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
+      width: "100%", maxWidth: "600px", margin: "auto", padding: "20px",
+      fontFamily: "Arial", backgroundColor: "#f4f4f4", borderRadius: "10px",
+      boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
     }}>
 
-    {/* ✅ Exibir o e-mail do usuário logado */}
-    {userId && userId.trim() !== "" && (
-      <div style={{
-        marginBottom: "10px", padding: "10px", backgroundColor: "#fff",
-        borderRadius: "5px", boxShadow: "0px 0px 5px rgba(0,0,0,0.1)",
-        color: "#000",  // ✅ Garante que o texto fique visível
-        fontWeight: "bold"
-      }}>
-        Você está conectado como: {userId}
-      </div>
-    )}
+      {userId && userId.trim() !== "" && (
+        <div style={{
+          marginBottom: "10px", padding: "10px", backgroundColor: "#fff",
+          borderRadius: "5px", boxShadow: "0px 0px 5px rgba(0,0,0,0.1)",
+          color: "#000", fontWeight: "bold"
+        }}>
+          Você está conectado como: {userId}
+        </div>
+      )}
 
       <div style={{
-        border: "1px solid #ccc", padding: "10px", height: "500px", minHeight: "500px",
-        maxHeight: "80vh", overflowY: "auto", backgroundColor: "#fff",
-        borderRadius: "5px", display: "flex", flexDirection: "column"
+        width: "100%", border: "1px solid #ccc", padding: "10px",
+        height: "80vh", maxHeight: "500px", overflowY: "auto",
+        backgroundColor: "#fff", borderRadius: "5px",
+        display: "flex", flexDirection: "column"
       }}>
         {messages.map((msg, index) => (
           <div key={index} style={{
             alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-            margin: "5px 0",
-            padding: "10px",
-            borderRadius: "10px",
-            maxWidth: "75%",
+            margin: "5px 0", padding: "10px",
+            borderRadius: "10px", maxWidth: "75%",
             backgroundColor: msg.sender === "user" ? "#007bff" : "#28a745",
             color: "#fff"
-          }}
-            dangerouslySetInnerHTML={{ __html: msg.text }} // Render HTML content
-          />
+          }}>
+            {msg.text}
+          </div>
         ))}
         {isTyping && (
           <div style={{
-            alignSelf: "flex-start", margin: "5px 0", padding: "10px", borderRadius: "10px",
-            maxWidth: "75%", backgroundColor: "#ddd", color: "#333"
+            alignSelf: "flex-start", margin: "5px 0", padding: "10px",
+            borderRadius: "10px", maxWidth: "75%", backgroundColor: "#ddd",
+            color: "#333"
           }}>
             IA está escrevendo...
           </div>
