@@ -92,7 +92,7 @@ function App() {
         color: "#000",  // ✅ Garante que o texto fique visível
         fontWeight: "bold"
       }}>
-        <strong>Você está conectado como:</strong> {userId}
+        <p>Você está conectado como:</p> {userId}
       </div>
     )}
 
