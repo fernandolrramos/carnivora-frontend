@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./App.css";
+import React, { useState, useEffect, useRef } from 'react';
+import './App.css';
 import { FaInstagram, FaYoutube } from "react-icons/fa";
 
 function App() {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [userEmail, setUserEmail] = useState(""); // ✅ Novo estado para armazenar o e-mail
   const chatRef = useRef(null);
 
-  // ✅ Obtém o user_id da URL (enviado pelo Wix)
+  // ✅ Get user_id from the URL (sent from Wix)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const user_id = urlParams.get("user_id");
@@ -22,56 +21,33 @@ function App() {
     }
   }, []);
 
-  // ✅ Obtém o e-mail do usuário logado ao carregar a página
+  // ✅ Doesnt scroll to bottom when messages update
   useEffect(() => {
-    if (!userId) return; // ✅ Só faz a requisição se o user_id estiver disponível
-
-    fetch(`https://carnivora-backend.onrender.com/get_user_info?email=${encodeURIComponent(userId)}`, {
-      method: "GET",
-      credentials: "include", // Para garantir que Wix passe as credenciais
-      headers: { "Content-Type": "application/json" }
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.email) {
-          setUserEmail(data.email);
-        } else {
-          console.warn("⚠️ O backend não retornou um e-mail válido.");
-        }
-      })
-      .catch(error => console.error("❌ Erro ao obter e-mail:", error));
-  }, [userId]); // ✅ Executa sempre que o userId for atualizado
-
-  // ✅ Garante que o chat role para baixo ao receber novas mensagens
-  useEffect(() => {
-    if (chatRef.current && !isTyping) {
+    if (chatRef.current && !isTyping) {  
       chatRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }, [messages, isTyping]);
 
-  // ✅ Envia uma mensagem inicial de boas-vindas ao carregar o chat
+  // ✅ Automatically send a welcome message when the chat loads
   useEffect(() => {
     const welcomeMessage = {
       sender: "AI",
       text: "Seja bem-vindo! 🥩 Eu sou a inteligência artificial do Dieta Carnívora Brasil. Como posso te ajudar hoje?"
     };
-    setMessages([welcomeMessage]); // Define a mensagem inicial
-  }, []);
+    setMessages([welcomeMessage]); // Set initial welcome message
+  }, []); // Runs only once when component mounts
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
     if (!userId) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "AI", text: "⚠️ Você precisa estar logado para usar o chat." }
-      ]);
+      setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "⚠️ Você precisa estar logado para usar o chat." }]);
       return;
     }
 
     const userMessage = { sender: "user", text: input };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
-    setInput("");
+    setInput('');
     setIsTyping(true);
 
     try {
@@ -83,20 +59,20 @@ function App() {
 
       const data = await response.json();
       const aiMessages = data.response
-        .split(/\n+/) // Divide a resposta em múltiplas linhas
-        .map((sentence, index) => ({
-          sender: "AI",
-          text: sentence.trim()
-        }))
+        .split(/\n+/)  // Split by newlines
+        .map((sentence, index) => {
+          const formattedSentence = sentence.trim();
+          return { sender: "AI", text: formattedSentence };
+        })
         .filter((msg) => msg.text.length > 0);
 
-      setMessages((prevMessages) => [...prevMessages, ...aiMessages]);
+      setMessages((prevMessages) => [
+        ...prevMessages, 
+        ...aiMessages
+      ]);
     } catch (error) {
       console.error("❌ Error sending message:", error);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "AI", text: "Erro: Não foi possível conectar ao AI. Atualize a página. Se o erro persistir contate: carnivoros.br@gmail.com" }
-      ]);
+      setMessages((prevMessages) => [...prevMessages, { sender: "AI", text: "Erro: Não foi possível conectar ao AI. Atualize a página. Se o erro persistir contate: carnivoros.br@gmail.com" }]);
     }
 
     setIsTyping(false);
@@ -107,17 +83,6 @@ function App() {
       maxWidth: "600px", margin: "auto", padding: "20px", fontFamily: "Arial",
       backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
     }}>
-
-      {/* ✅ Exibir o e-mail do usuário logado */}
-      {userEmail && (
-        <div style={{
-          marginBottom: "10px", padding: "10px", backgroundColor: "#fff",
-          borderRadius: "5px", boxShadow: "0px 0px 5px rgba(0,0,0,0.1)"
-        }}>
-          <strong>Você está conectado como:</strong> {userEmail}
-        </div>
-      )}
-
       <div style={{
         border: "1px solid #ccc", padding: "10px", height: "500px", minHeight: "500px",
         maxHeight: "80vh", overflowY: "auto", backgroundColor: "#fff",
@@ -133,7 +98,7 @@ function App() {
             backgroundColor: msg.sender === "user" ? "#007bff" : "#28a745",
             color: "#fff"
           }}
-            dangerouslySetInnerHTML={{ __html: msg.text }} // Renderiza HTML dentro das mensagens
+            dangerouslySetInnerHTML={{ __html: msg.text }} // Render HTML content
           />
         ))}
         {isTyping && (
