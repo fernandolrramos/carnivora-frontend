@@ -78,11 +78,21 @@ function App() {
     setIsTyping(false);
   };
 
-  return (
+  return (   
     <div style={{
       maxWidth: "600px", margin: "auto", padding: "20px", fontFamily: "Arial",
       backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
     }}>
+
+    {/* ✅ Exibir o e-mail do usuário logado */}
+    {userId && (
+      <div style={{
+        marginBottom: "10px", padding: "10px", backgroundColor: "#fff",
+        borderRadius: "5px", boxShadow: "0px 0px 5px rgba(0,0,0,0.1)"
+      }}>
+        <strong>Você está conectado como:</strong> {userId}
+      </div>
+    )}
       <div style={{
         border: "1px solid #ccc", padding: "10px", height: "500px", minHeight: "500px",
         maxHeight: "80vh", overflowY: "auto", backgroundColor: "#fff",
