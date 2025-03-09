@@ -84,18 +84,7 @@ function App() {
       backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
     }}>
 
-    {/* ✅ Exibir o e-mail do usuário logado */}
-    {userId && userId.trim() !== "" && (
-      <div style={{
-        marginBottom: "10px", padding: "10px", backgroundColor: "#fff",
-        borderRadius: "5px", boxShadow: "0px 0px 5px rgba(0,0,0,0.1)",
-        color: "#000",  // ✅ Garante que o texto fique visível
-        fontWeight: "bold"
-      }}>
-        Você está conectado como: {userId}
-      </div>
-    )}
-
+    
       <div style={{
         border: "1px solid #ccc", padding: "10px", height: "500px", minHeight: "500px",
         maxHeight: "80vh", overflowY: "auto", backgroundColor: "#fff",
