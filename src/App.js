@@ -79,10 +79,7 @@ function App() {
   };
 
   return (   
-    <div style={{
-      maxWidth: "600px", width: "100%", margin: "auto", padding: "20px", fontFamily: "Arial",
-      backgroundColor: "#f4f4f4", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)"
-    }}>
+    <div className="App">
       
     {/* ✅ Exibir o e-mail do usuário logado */}
     {userId && userId.trim() !== "" && (
