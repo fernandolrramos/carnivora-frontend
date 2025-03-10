@@ -18,7 +18,7 @@ body {
   flex-direction: column;
   width: 100% !important;
   max-width: 1500px !important;
-  height: 50hv !important;
+  height: 50vh !important;
   min-height: 600px;  /* Prevents shrinking */
   background: #40414F; /* Cinza escuro */
   border-radius: 10px;
